@@ -1,4 +1,4 @@
 import { io } from "socket.io-client";
 export function connectSocket(){
-    return io("http://localhost:3001");
+    return io("https://chat-void-back.onrender.com");
 }
