@@ -1,107 +1,11 @@
-"use client";
+import ClientChat from "./ClientChat";
+
 export const dynamic = "force-dynamic";
 
+export default async function Page({ searchParams }) {
+  const params = await searchParams;
+  const code = params?.code ?? null;
+  const name = params?.name ?? null;
 
-import { connectSocket } from "../socket";
-import React, { useState, useRef, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
-export default function Chatroom() {
-  const searchParams = useSearchParams();
-  const code = searchParams.get("code");
-  const secretName = searchParams.get("name");
-
-  const [inpu, setInput] = useState("");
-  const [messages, setMessages] = useState([]);
-  const socket = useRef(null);
-  const sendMsg = () => {
-
-    setMessages((prev) => [...prev, {
-      text: inpu, type: "sent", time: new Date(Date.now()).toLocaleTimeString("en-IN", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true
-      })
-    }]);
-    socket.current.emit("message", { msg: inpu, type: "recieved", secretName: secretName, time: Date.now() })
-    setInput("");
-  };
-
-  useEffect(() => {
-    if (!code) return;
-
-    socket.current = connectSocket();
-
-    socket.current.emit("join-room", {
-      code,
-      secretName,
-    });
-
-    socket.current.on("user-joined", (data) => {
-      console.log("user joined: ", data.name);
-    });
-
-    socket.current.on("message", (msg) => {
-      console.log("message: ", msg);
-      setMessages((prev) => [
-        ...prev,
-        {
-          text: msg.msg,
-          type: "recieved", secretName: msg.secretName,
-          time: new Date(msg.time).toLocaleTimeString("en-IN", {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true
-
-          })
-        },
-      ]);
-    });
-
-    return () => {
-      socket.current.disconnect();
-    };
-  }, [code]);
-  return (
-    <div className="void-wrapper main">
-      <div className="void-hero chat-section">
-        <div className="chat">
-          {messages.map((msg, index) => (
-            <div className="chatbox" key={index}>
-
-              <div className={`message ${msg.type === "sent" ? "sent" : "received"}`}>
-                {msg.text}
-              </div>
-
-              <div className="timeDate">
-                {msg.type === "recieved" ? (
-
-                  <div className={`secretName  ${msg.type === "sent" ? "sent" : "received"}`}>
-                    {msg.secretName}
-                  </div>
-
-                ) : null}
-
-                <div className="time">
-                  {msg.time}
-                </div>
-              </div>
-
-
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="newmessage">
-        <input
-          type="text"
-          placeholder=""
-          value={inpu}
-          onChange={(e) => setInput(e.target.value)}
-        />
-        <button className="sendbtn" onClick={sendMsg}>
-          V
-        </button>
-      </div>
-    </div>
-  );
+  return <ClientChat code={code} name={name} />;
 }
