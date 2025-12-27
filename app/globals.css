@@ -135,6 +135,15 @@ opacity: 0.8;
   max-width: 800px;  
   max-height: 85vh;
   overflow-y: auto;
+}
+.chatbox{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;      
+  max-width: 800px;  
+  max-height: 85vh;
+  
   padding: 10px;
 }
 .message {
@@ -152,6 +161,15 @@ opacity: 0.8;
   align-self: flex-end; 
   background-color: #000000;
   color: white;
+}
+.sender{
+  display: flex;
+  flex-direction: row;
+  font-size: 0.5rem;
+ max-width: 60%;
+}
+.secretName{
+
 }
 .newmessage input{
   width: 55vw;
