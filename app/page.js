@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { connectSocket } from "./socket";
 import { useRouter } from "next/navigation";
 const Home = () => {
   const socket = useRef(null);
@@ -12,29 +11,16 @@ const Home = () => {
   const [chatMode, setChatMode] = useState(false);
   const joinFunction = () => {
     if (!code.trim() || !secretName.trim()) {
-      alert("code required");
+      alert("U cant enter a Void without its Number");
       return;
     }
     console.log(code, "  ", secretName);
     setChatMode(true);
-     router.push(
+    router.push(
       `/chat?code=${encodeURIComponent(code)}&name=${encodeURIComponent(secretName)}`
     );
   };
 
-  // useEffect(() => {
-  //   if (!chatMode) return;
-
-  //   socket.current = connectSocket();
-
-  //   socket.current.emit("join-room", {
-  //     code,
-  //     secretName,
-  //   });
-  //   socket.current.on("user-joined", (data) => {
-  //     console.log("user joined: ", data.name);
-  //   });
-  // }, [chatMode]);
 
   return (
     <div className="void-wrapper">
@@ -58,52 +44,40 @@ const Home = () => {
           <p>Anonymous by design. Temporary by nature.</p>
           <div className="void-actions">
             <button className="primary btn" onClick={() => setMode("create")}>
-              Create Void
-            </button>
-            <button className="secondary btn" onClick={() => setMode("join")}>
-              Join Void
+              Create/Join The Void
             </button>
           </div>
         </section>
       )}
-      {mode === "join" && (
+      {mode === "create" && (
         <div className="joinbox void-hero">
-          <h1>Join the secret VOID...</h1>
+          <h1>Create or Join The VOID...</h1>
+          <input
+            type="text"
+            placeholder="Enter Your Name in Void "
+            value={secretName}
+            onChange={(e) => setSecretName(e.target.value)}
+          />
           <input
             type="text"
             placeholder="Enter Void Code"
             value={code}
             onChange={(e) => setCode(e.target.value)}
+            onKeyDown={(e)=>{
+              if(e.key ==="Enter"){
+                e.preventDefault();
+                joinFunction();
+              }
+            }}
           />
-          <input
-            type="text"
-            placeholder="Enter Your Name in Void "
-            value={secretName}
-            onChange={(e) => setSecretName(e.target.value)}
-          />
-          <button className="bttn" onClick={joinFunction}>
-            Join
+          <div className="btns">
+            <button className="bttn" onClick={joinFunction}>
+           Proceed
           </button>
-        </div>
-      )}
-      {mode === "create" && (
-        <div className="joinbox void-hero">
-          <h1>Create the secret VOID...</h1>
-          <input
-            type="text"
-            placeholder="Enter Your Name in Void "
-            value={secretName}
-            onChange={(e) => setSecretName(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="Create Void Code"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-          />
-          <button className="bttn" onClick={joinFunction}>
-            Create Void
+          <button className="bttn bck" onClick={()=>setMode(null)}>
+            Return
           </button>
+          </div>
         </div>
       )}
     </div>
